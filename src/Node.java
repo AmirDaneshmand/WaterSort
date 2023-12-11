@@ -2,10 +2,12 @@ public class Node {
 
     private Stack stackNode;
     private Node nextNode;
+    private boolean isSelected;
 
     public Node(Stack stackNode){
         this.setStackNode(stackNode);
         this.setNextNode(null);
+        this.setSelected(false);
     }
 
 
@@ -28,5 +30,13 @@ public class Node {
     public void setNextNode(Node nextNode) {
 
         this.nextNode = nextNode;
+    }
+
+    public boolean isSelected() {
+        return isSelected;
+    }
+
+    public void setSelected(boolean selected) {
+        isSelected = selected;
     }
 }

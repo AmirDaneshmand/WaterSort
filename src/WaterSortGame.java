@@ -5,6 +5,7 @@ public class WaterSortGame {
     private String[] colors;
     private String[] chooseColor;
     private int maxBottleSize;
+    private int selectBottle;
 
     private int n;
 
@@ -12,7 +13,7 @@ public class WaterSortGame {
         this.colors = colors;
         this.maxBottleSize = maxBottleSize;
         linkedList = new LinkedList();
-
+        this.setSelectBottle(-1);
         n = colors.length*maxBottleSize;
 
         chooseColor = new String[n];
@@ -28,6 +29,96 @@ public class WaterSortGame {
         String str = linkedList.toString(maxBottleSize);
         System.out.println(str);
     }
+
+
+
+    public boolean select(int bottleNumber){
+        if(getSelectBottle()!=-1){
+            System.out.println("something is selected");
+            return false;
+        }
+        Node selectNode = linkedList.getNode(bottleNumber -1);
+        if(selectNode.getStackNode().isCorrect()){
+            System.out.println("The bottle is full");
+            System.out.println();
+            System.out.println("---------------------------------");
+            System.out.println();
+            return false;
+        }
+        if(selectNode.getStackNode().isEmpty()){
+            System.out.println("The bottle is empty!!!!!");
+            System.out.println();
+            System.out.println("---------------------------------");
+            System.out.println();
+            return false;
+        }
+        selectNode.setSelected(true);
+
+        setSelectBottle(bottleNumber-1);
+        String str = linkedList.toString(maxBottleSize);
+        System.out.println(str);
+        return true;
+    }
+
+    public void deSelect(){
+        if(getSelectBottle()==-1){
+            return;
+        }
+        Node selectNode = linkedList.getNode(getSelectBottle());
+        selectNode.setSelected(false);
+        setSelectBottle(-1);
+
+        String str = linkedList.toString(maxBottleSize);
+        System.out.println(str);
+    }
+
+    public void selectNext(){
+        if(getSelectBottle()==-1){
+            return;
+        }
+
+        int select = getSelectBottle();
+        deSelect();
+        if(select==colors.length){
+            select = 0;
+            System.out.println("end");
+        }else{
+           select++;
+
+
+        }
+
+        select(select +1);
+
+        //System.out.println(getSelectBottle() + "r2ftwg");
+
+
+    }
+
+    public void selectPervious(){
+        if(getSelectBottle()==-1){
+            return;
+        }
+
+        deSelect();
+        if(getSelectBottle()==1){
+            setSelectBottle(colors.length);
+        }
+        else{
+            setSelectBottle(selectBottle--);
+        }
+        select(getSelectBottle());
+
+
+    }
+
+
+
+
+
+
+
+
 
 
     private void sort(int index , String[] array){
@@ -57,5 +148,13 @@ public class WaterSortGame {
         Stack stack1 = new Stack(maxBottleSize);
         node = new Node(stack1);
         linkedList.addLink(node);
+    }
+
+    public int getSelectBottle() {
+        return selectBottle;
+    }
+
+    public void setSelectBottle(int selectBottle) {
+        this.selectBottle = selectBottle;
     }
 }

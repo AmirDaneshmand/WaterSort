@@ -52,21 +52,31 @@ public class LinkedList {
                 String color =getNode(i).getStackNode().getColor(step);
 
                 if(color == null){
-                    str += "Empty     ";
+                    str += "Empty    ";
                 }else if(color =="Yellow"){
-                    str += color+"  ";
+                    str += color+"   ";
                 }else if(color =="Red"){
-                    str += color+"     ";
+                    str += color+"      ";
                 }else if(color =="Blue"){
-                    str += color+"    ";
+                    str += color+"     ";
                 }else{
-                    str += color+"  ";
+                    str += color+"   ";
                 }
             }
             step--;
             str +="\n";
         }
 
+        for (int i = 0; i < size ; i++) {
+            if(getNode(i).isSelected()){
+                str += "---#--- ";
+            }
+            else{
+                str += "         ";
+            }
+        }
+        str +="\n";
+        str +="-----------------------------------------------";
         return str;
     }
 }

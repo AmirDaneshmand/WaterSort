@@ -10,6 +10,19 @@ public class Stack {
 
     }
 
+    public boolean isCorrect(){
+        if(isEmpty()){
+            return false;
+        }
+        String color = colorStr[0];
+        for (int i = 1; i < colorStr.length; i++) {
+            if(colorStr[i]!=color || colorStr[i]==null){
+                return false;
+            }
+        }
+        return true;
+    }
+
     public boolean isEmpty(){
 
         return (top ==-1);
