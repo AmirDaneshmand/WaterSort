@@ -30,11 +30,18 @@ public class Stack {
 
     public void push(String color){
 
+        if(color==null){
+            return;
+        }
+
         colorStr[++top] = color;
     }
 
     public String peek(){
 
+        if(top == -1){
+            return null;
+        }
         return colorStr[top];
     }
 
@@ -42,10 +49,14 @@ public class Stack {
         if(isEmpty()){
             return null;
         }
+        colorStr[top] = null;
         return colorStr[top--];
     }
 
 
+    public boolean isFull(){
+        return (top == size -1);
+    }
 
 
 

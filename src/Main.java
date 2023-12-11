@@ -5,8 +5,9 @@ public class Main {
 
         waterSortGame.select(2);
         waterSortGame.selectNext();
-        waterSortGame.selectNext();
+        //waterSortGame.selectNext();
         //waterSortGame.selectPervious();
         //waterSortGame.selectNext();
+        waterSortGame.pour(4);
     }
 }

@@ -31,6 +31,50 @@ public class WaterSortGame {
     }
 
 
+    public boolean pour(int bottleNumber){
+        bottleNumber--;
+        if(getSelectBottle()==-1){
+            System.out.println("nothing is selected");
+            return false;
+        }
+
+        if(linkedList.getNode(bottleNumber).isSelected()){
+            System.out.println("can not pour something to itself");
+            return false;
+        }
+
+        if(linkedList.getNode(bottleNumber).getStackNode().isFull()){
+            System.out.println("the bottle is full");
+            return false;
+        }
+
+        String takeColor = linkedList.getNode(getSelectBottle()).getStackNode().peek();
+        String giveColor = linkedList.getNode(bottleNumber).getStackNode().peek();
+
+        if (takeColor != giveColor && giveColor!=null){
+            System.out.println("can not pour because the colors are not the same");
+            return false;
+        }
+
+       do{
+           linkedList.getNode(bottleNumber).getStackNode().push(takeColor);
+           linkedList.getNode(getSelectBottle()).getStackNode().pop();
+           giveColor = takeColor;
+           takeColor = linkedList.getNode(getSelectBottle()).getStackNode().peek();
+
+
+       }while (!linkedList.getNode(bottleNumber).getStackNode().isFull() &&
+               takeColor == giveColor
+
+       );
+
+       if(linkedList.getNode(getSelectBottle()).getStackNode().isEmpty()){
+           deSelect();
+       }
+        String str = linkedList.toString(maxBottleSize);
+        System.out.println(str);
+        return true;
+    }
 
     public boolean select(int bottleNumber){
         if(getSelectBottle()!=-1){
