@@ -64,4 +64,9 @@ public class Stack {
     public String getColor(int index){
         return colorStr[index];
     }
+    public void setColor(String color , int index){
+        colorStr[index] = color;
+//        System.out.println("cooool" +color);
+//        System.out.println("isss" +colorStr[index]);
+    }
 }

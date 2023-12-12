@@ -11,5 +11,6 @@ public class Main {
         //waterSortGame.selectNext();
         waterSortGame.pour(4);
         waterSortGame.swap(2);
+        waterSortGame.replaceColor("Red","Green");
     }
 }

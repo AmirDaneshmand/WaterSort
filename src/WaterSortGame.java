@@ -31,6 +31,56 @@ public class WaterSortGame {
         System.out.println(str);
     }
 
+    public void replaceColor(String firstColor , String secondColor){
+        boolean secondHas = false;
+        boolean firstHas = false;
+
+        boolean changing = false;
+        for (String color : colors) {
+            if (secondColor == color) {
+                secondHas = true;
+                break;
+            }
+        }
+        if(secondHas){
+            System.out.println("second color is exist");
+            return;
+        }
+        for (String color : colors) {
+            if (firstColor == color) {
+                firstHas = true;
+                break;
+            }
+        }
+        if(!firstHas){
+            System.out.println("first color is not exist");
+            return;
+        }
+
+        Node changeColorNode =linkedList.getNode(0);
+        Stack colorStack;
+        String findColor;
+        do {
+            colorStack = changeColorNode.getStackNode();
+            for (int i = 0; i < colors.length ; i++) {
+                findColor = colorStack.getColor(i);
+                if(findColor==firstColor){
+                    colorStack.setColor(secondColor,i);
+                    changing = true;
+                   // System.out.println(colorStack.getColor(i));
+                }
+                if(findColor==null){
+                    break;
+                }
+            }
+            changeColorNode = changeColorNode.getNextNode();
+        }while (changeColorNode!= null);
+
+        if(changing){
+            String str = linkedList.toString(maxBottleSize);
+            System.out.println(str);
+        }
+    }
     public void swap(int bottleNumber){
         bottleNumber--;
         if(getSelectBottle()==-1){
