@@ -6,6 +6,7 @@ public class WaterSortGame {
     private String[] chooseColor;
     private int maxBottleSize;
     private int selectBottle;
+    private int firstPrint = 0;
 
     private int n;
 
@@ -30,6 +31,26 @@ public class WaterSortGame {
         System.out.println(str);
     }
 
+    public void swap(int bottleNumber){
+        bottleNumber--;
+        if(getSelectBottle()==-1){
+            System.out.println("nothing is selected");
+            return;
+        }
+        if(getSelectBottle()==bottleNumber){
+            System.out.println("cant swap with itself");
+            return;
+        }
+        if(bottleNumber>=colors.length){
+            System.out.println("bottle is not found");
+            return;
+        }
+
+        linkedList.swap(selectBottle,bottleNumber);
+        String str = linkedList.toString(maxBottleSize);
+        System.out.println(str);
+
+    }
 
     public boolean pour(int bottleNumber){
         bottleNumber--;
@@ -112,8 +133,11 @@ public class WaterSortGame {
         selectNode.setSelected(false);
         setSelectBottle(-1);
 
-        String str = linkedList.toString(maxBottleSize);
-        System.out.println(str);
+        if(firstPrint==0){
+            String str = linkedList.toString(maxBottleSize);
+            System.out.println(str);
+        }
+        firstPrint=0;
     }
 
     public void selectNext(){
@@ -122,6 +146,7 @@ public class WaterSortGame {
         }
 
         int select = getSelectBottle();
+        firstPrint = 1;
         deSelect();
         if(select==colors.length){
             select = 0;
@@ -143,15 +168,16 @@ public class WaterSortGame {
         if(getSelectBottle()==-1){
             return;
         }
-
+        int select = getSelectBottle();
+        firstPrint = 1;
         deSelect();
-        if(getSelectBottle()==1){
-            setSelectBottle(colors.length);
+        if(select == 0){
+            select = colors.length - 1;
         }
         else{
-            setSelectBottle(selectBottle--);
+            select --;
         }
-        select(getSelectBottle());
+        select(select + 1);
 
 
     }
@@ -195,10 +221,12 @@ public class WaterSortGame {
     }
 
     public int getSelectBottle() {
+
         return selectBottle;
     }
 
     public void setSelectBottle(int selectBottle) {
+
         this.selectBottle = selectBottle;
     }
 }

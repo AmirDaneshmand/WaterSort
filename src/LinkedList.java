@@ -9,6 +9,125 @@ public class LinkedList {
         size = 0;
     }
 
+    public Node getNode(int index){
+        if(isEmpty()){
+            return null;
+        }
+        if(index>=size){
+            return null;
+        }
+        Node p = firstNode;
+        for (int i = 0; i < index; i++) {
+            p = p.getNextNode();
+        }
+        return p;
+    }
+    public void swap(int selectBottle,int bottleNumber){
+        Node swapNode;
+        Node swapNodePer = firstNode;
+        Node selectBo;
+        Node selectBoPerv = firstNode;
+
+        if(selectBottle==0){
+            if(bottleNumber==1){
+                selectBo = firstNode;
+                swapNode = selectBo.getNextNode();
+                selectBo.setNextNode(swapNode.getNextNode());
+                swapNode.setNextNode(selectBo);
+                firstNode = swapNode;
+                return;
+            }
+
+            for (int i = 0; i < bottleNumber -1; i++) {
+                swapNodePer = swapNodePer.getNextNode();
+            }
+            swapNode = swapNodePer.getNextNode();
+            selectBo = firstNode;
+            Node p = selectBo.getNextNode();
+            selectBo.setNextNode(swapNode.getNextNode());
+            swapNode.setNextNode(p);
+            swapNodePer.setNextNode(selectBo);
+            firstNode = swapNode;
+            return;
+        }
+
+        if(bottleNumber==0){
+            if(selectBottle==1){
+                swapNode =firstNode;
+                selectBo = swapNode.getNextNode();
+                swapNode.setNextNode(selectBo.getNextNode());
+                selectBo.setNextNode(swapNode);
+                firstNode = selectBo;
+                return;
+            }
+            for (int i = 0; i < selectBottle -1; i++) {
+                selectBoPerv = selectBoPerv.getNextNode();
+            }
+            selectBo = selectBoPerv.getNextNode();
+            swapNode = firstNode;
+            Node p = swapNode.getNextNode();
+            swapNode.setNextNode(selectBo.getNextNode());
+            selectBoPerv.setNextNode(swapNode);
+            selectBo.setNextNode(p);
+            firstNode = selectBo;
+            return;
+        }
+
+        if(selectBottle - bottleNumber ==1){
+            swapNodePer = getNode(bottleNumber-1);
+            swapNode = swapNodePer.getNextNode();
+
+            selectBo = getNode(selectBottle);
+            Node p = selectBo.getNextNode();
+
+            swapNodePer.setNextNode(selectBo);
+            swapNode.setNextNode(p);
+            selectBo.setNextNode(swapNode);
+            return;
+        }
+        if(bottleNumber - selectBottle==1){
+            selectBoPerv = getNode(selectBottle-1);
+            selectBo = selectBoPerv.getNextNode();
+
+            swapNode = getNode(bottleNumber);
+            Node p = swapNode.getNextNode();
+
+            selectBoPerv.setNextNode(swapNode);
+            selectBo.setNextNode(p);
+            swapNode.setNextNode(selectBo);
+            return;
+        }
+
+        if(bottleNumber>selectBottle){
+            swapNodePer = getNode(bottleNumber - 1);
+            swapNode = swapNodePer.getNextNode();
+
+            selectBoPerv = getNode(selectBottle-1);
+            selectBo = selectBoPerv.getNextNode();
+            Node p = selectBo.getNextNode();
+
+            selectBo.setNextNode(swapNode.getNextNode());
+            swapNodePer.setNextNode(selectBo);
+            selectBoPerv.setNextNode(swapNode);
+            swapNode.setNextNode(p);
+            return;
+        }
+        if(selectBottle>bottleNumber){
+            swapNodePer = getNode(bottleNumber - 1);
+            swapNode = swapNodePer.getNextNode();
+            Node p = swapNode.getNextNode();
+
+            selectBoPerv = getNode(selectBottle-1);
+            selectBo = selectBoPerv.getNextNode();
+
+
+            swapNodePer.setNextNode(selectBo);
+            swapNode.setNextNode(selectBo.getNextNode());
+            selectBoPerv.setNextNode(swapNode);
+            selectBo.setNextNode(p);
+            return;
+        }
+    }
     public boolean isEmpty(){
 
         return (firstNode==null);
@@ -30,19 +149,7 @@ public class LinkedList {
         p.setNextNode(addNode);
     }
 
-    public Node getNode(int index){
-        if(isEmpty()){
-            return null;
-        }
-        if(index>=size){
-            return null;
-        }
-        Node p = firstNode;
-        for (int i = 0; i < index; i++) {
-            p = p.getNextNode();
-        }
-        return p;
-    }
+
 
     public String toString(int maxBottleSize){
         String str ="";
