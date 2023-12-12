@@ -1,7 +1,7 @@
 public class Main {
     public static void main(String[] args) {
         String[] colors = {"Yellow" , "Red" , "Blue"};
-        WaterSortGame waterSortGame = new WaterSortGame(colors,3);
+        WaterSortGame waterSortGame = new WaterSortGame(colors,4 );
 
         waterSortGame.select(2);
         waterSortGame.selectNext();
@@ -12,5 +12,8 @@ public class Main {
         waterSortGame.pour(4);
         waterSortGame.swap(2);
         waterSortGame.replaceColor("Red","Green");
+        waterSortGame.addEmptyBottle();
+        waterSortGame.pour(5);
+        waterSortGame.selectNext();waterSortGame.selectNext();waterSortGame.selectNext();waterSortGame.selectNext();waterSortGame.selectNext();
     }
 }

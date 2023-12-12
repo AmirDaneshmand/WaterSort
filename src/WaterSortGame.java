@@ -8,6 +8,7 @@ public class WaterSortGame {
     private int selectBottle;
     private int firstPrint = 0;
 
+    boolean usingExtraBottle = false;
     private int n;
 
     public WaterSortGame(String[] colors , int maxBottleSize){
@@ -31,6 +32,20 @@ public class WaterSortGame {
         System.out.println(str);
     }
 
+    public void addEmptyBottle(){
+        if(usingExtraBottle){
+            System.out.println("you use your chance to add an empty Bottle");
+            return;
+        }
+        usingExtraBottle = true;
+
+        Stack emptyStack = new Stack((maxBottleSize/2));
+        Node emptyNode = new Node(emptyStack);
+        linkedList.addLink(emptyNode);
+        linkedList.setAddBottle(true);
+        String str = linkedList.toString(maxBottleSize);
+        System.out.println(str);
+    }
     public void replaceColor(String firstColor , String secondColor){
         boolean secondHas = false;
         boolean firstHas = false;
@@ -62,7 +77,7 @@ public class WaterSortGame {
         String findColor;
         do {
             colorStack = changeColorNode.getStackNode();
-            for (int i = 0; i < colors.length ; i++) {
+            for (int i = 0; i < maxBottleSize ; i++) {
                 findColor = colorStack.getColor(i);
                 if(findColor==firstColor){
                     colorStack.setColor(secondColor,i);
@@ -83,6 +98,13 @@ public class WaterSortGame {
     }
     public void swap(int bottleNumber){
         bottleNumber--;
+       if(usingExtraBottle){
+           if(selectBottle == colors.length+1 || bottleNumber == colors.length+1){
+               System.out.println("cant swap the extra bottle that add");
+               return;
+           }
+       }
+
         if(getSelectBottle()==-1){
             System.out.println("nothing is selected");
             return;
@@ -100,6 +122,7 @@ public class WaterSortGame {
         String str = linkedList.toString(maxBottleSize);
         System.out.println(str);
 
+        selectBottle = bottleNumber;
     }
 
     public boolean pour(int bottleNumber){
@@ -135,9 +158,7 @@ public class WaterSortGame {
 
 
        }while (!linkedList.getNode(bottleNumber).getStackNode().isFull() &&
-               takeColor == giveColor
-
-       );
+               takeColor == giveColor);
 
        if(linkedList.getNode(getSelectBottle()).getStackNode().isEmpty()){
            deSelect();
@@ -196,16 +217,32 @@ public class WaterSortGame {
         }
 
         int select = getSelectBottle();
-        firstPrint = 1;
-        deSelect();
-        if(select==colors.length){
-            select = 0;
-            System.out.println("end");
-        }else{
-           select++;
+
+        if(!usingExtraBottle){
+            firstPrint = 1;
+            deSelect();
+            if(select==colors.length){
+                select = 0;
+                System.out.println("end");
+            }else{
+                select++;
 
 
+            }
+        }else {
+
+            firstPrint = 1;
+            deSelect();
+            if(select==colors.length +1 ){
+                select = 0;
+                System.out.println("end");
+            }else{
+                select++;
+
+
+            }
         }
+
 
         select(select +1);
 
@@ -221,19 +258,40 @@ public class WaterSortGame {
         int select = getSelectBottle();
         firstPrint = 1;
         deSelect();
-        if(select == 0){
-            select = colors.length - 1;
+
+        if(!usingExtraBottle){
+            if(select == 0){
+                select = colors.length - 1;
+            }
+            else{
+                select --;
+            }
+        }else{
+            if(select == 0){
+                select = colors.length;
+            }
+            else{
+                select --;
+            }
         }
-        else{
-            select --;
-        }
+
         select(select + 1);
 
 
     }
 
-
-
+    public boolean hasWon(){
+        Node check = linkedList.getNode(0);
+        boolean win = true;
+        while (check!=null){
+            if(check.getStackNode().isCorrect() || check.getStackNode().isEmpty()){
+                continue;
+            }
+            win = false;
+            break;
+        }
+        return win;
+    }
 
 
 

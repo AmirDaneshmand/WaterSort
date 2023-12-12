@@ -3,6 +3,7 @@ import javax.swing.*;
 public class LinkedList {
     private Node firstNode;
     private int size;
+    private boolean addBottle = false;
 
     public LinkedList(){
         firstNode = null;
@@ -154,24 +155,73 @@ public class LinkedList {
     public String toString(int maxBottleSize){
         String str ="";
         int step = maxBottleSize - 1;
-        while (step>-1){
-            for (int i = 0; i < size ; i++) {
-                String color =getNode(i).getStackNode().getColor(step);
+        if(!isAddBottle()){
+            while (step>-1){
+                for (int i = 0; i < size ; i++) {
+                    String color =getNode(i).getStackNode().getColor(step);
 
-                if(color == null){
-                    str += "Empty    ";
-                }else if(color =="Yellow"){
-                    str += color+"   ";
-                }else if(color =="Red"){
-                    str += color+"      ";
-                }else if(color =="Blue"){
-                    str += color+"     ";
-                }else{
-                    str += color+"   ";
+                    if(color == null){
+                        str += "Empty    ";
+                    }else if(color =="Yellow"){
+                        str += color+"   ";
+                    }else if(color =="Red"){
+                        str += color+"      ";
+                    }else if(color =="Blue"){
+                        str += color+"     ";
+                    }else{
+                        str += color+"   ";
+                    }
                 }
+                step--;
+                str +="\n";
             }
-            step--;
-            str +="\n";
+        }
+        else{
+            while (step>-1){
+//                System.out.println("ATTT"+step);
+//                System.out.println("(size/2)+(size%2)"+(size/2));
+
+                //System.out.println(size/2+"  sizeee   ");
+
+                   // System.out.println("ATTT"+step);
+                    for (int i = 0; i < size-1 ; i++) {
+                        String color =getNode(i).getStackNode().getColor(step);
+
+                        if(color == null){
+                            str += "Empty    ";
+                        }else if(color =="Yellow"){
+                            str += color+"   ";
+                        }else if(color =="Red"){
+                            str += color+"      ";
+                        }else if(color =="Blue"){
+                            str += color+"     ";
+                        }else{
+                            str += color+"   ";
+                        }
+                    }
+
+                    if(maxBottleSize/2 >step ){
+                        String color =getNode(size - 1).getStackNode().getColor(step);
+
+                        if(color == null){
+                            str += "Empty    ";
+                        }else if(color =="Yellow"){
+                            str += color+"   ";
+                        }else if(color =="Red"){
+                            str += color+"      ";
+                        }else if(color =="Blue"){
+                            str += color+"     ";
+                        }else{
+                            str += color+"   ";
+                        }
+                    }
+
+
+
+                step--;
+                str +="\n";
+            }
+
         }
 
         for (int i = 0; i < size ; i++) {
@@ -185,5 +235,13 @@ public class LinkedList {
         str +="\n";
         str +="-----------------------------------------------";
         return str;
+    }
+
+    public boolean isAddBottle() {
+        return addBottle;
+    }
+
+    public void setAddBottle(boolean addBottle) {
+        this.addBottle = addBottle;
     }
 }
