@@ -7,21 +7,14 @@ public class WaterSortGame {
     private int maxBottleSize;
     private int selectBottle;
     private int firstPrint = 0;
-    private int beforSelect;
-
-    boolean selectFun = false;
-    boolean selectPervFun = false;
-    boolean selectNextFun = false;
-    boolean deselectFun = false;
-    boolean addEmptyFun = false;
-    boolean replaceColorFun = false;
-    boolean swapFun = false;
-    boolean pourFun = false;
 
     boolean usingExtraBottle = false;
     private int n;
 
+    private MethodStack methodStack;
+
     public WaterSortGame(String[] colors , int maxBottleSize){
+        this.methodStack = new MethodStack();
         this.colors = colors;
         this.maxBottleSize = maxBottleSize;
         linkedList = new LinkedList();
@@ -42,6 +35,75 @@ public class WaterSortGame {
         System.out.println(str);
     }
 
+    public void undo(){
+
+        if(methodStack.isEmpty()){
+            System.out.println("You dont have any operation to undo");
+            return;
+        }
+
+        MethodNode operateNode = methodStack.pop();
+        String operateStr = operateNode.getOperation();
+
+        switch (operateStr){
+            case "select":
+                System.out.println("");
+                System.out.println("select");
+                System.out.println("");
+                deSelect();
+                methodStack.pop();
+                break;
+            case "deSelect":
+                System.out.println("");
+                System.out.println("deSelect");
+                System.out.println("");
+                select(operateNode.getDeSelect());
+                methodStack.pop();
+                break;
+            case "selectNext":
+                System.out.println("");
+                System.out.println("selectNext");
+                System.out.println("");
+                selectPervious();
+                methodStack.pop();
+
+                break;
+            case "selectPervious":
+                System.out.println("");
+                System.out.println("selectPervious");
+                System.out.println("");
+                selectNext();
+                methodStack.pop();
+
+                break;
+            case "pour":
+                System.out.println("");
+                System.out.println("pour");
+                System.out.println("");
+                undoPour(operateNode);
+                methodStack.pop();
+                break;
+            case "swap":
+                System.out.println("");
+                System.out.println("swap");
+                System.out.println("");
+                deSelect();
+                methodStack.pop();
+                select(operateNode.getSwapbottleNumber()+1);
+                methodStack.pop();
+                swap(operateNode.getSwapSelect()+1);
+                methodStack.pop();
+                deSelect();
+                methodStack.pop();
+                select(operateNode.getSwapSelect()+1);
+                methodStack.pop();
+                break;
+
+
+        }
+
+    }
+
     public void addEmptyBottle(){
         if(usingExtraBottle){
             System.out.println("you use your chance to add an empty Bottle");
@@ -53,13 +115,13 @@ public class WaterSortGame {
         Node emptyNode = new Node(emptyStack);
         linkedList.addLink(emptyNode);
         linkedList.setAddBottle(true);
+
+        MethodNode methodNode = new MethodNode("addEmptyBottle");
+        methodStack.push(methodNode);
+
         String str = linkedList.toString(maxBottleSize);
         System.out.println(str);
-        setTrue("addEmptyFun");
     }
-
-    String firstColor;
-    String secondColor;
     public void replaceColor(String firstColor , String secondColor){
         boolean secondHas = false;
         boolean firstHas = false;
@@ -106,16 +168,16 @@ public class WaterSortGame {
         }while (changeColorNode!= null);
 
         if(changing){
+
+            MethodNode methodNode = new MethodNode("replaceColor");
+            methodNode.setFirstColor(firstColor);
+            methodNode.setSecondColor(secondColor);
+            methodStack.push(methodNode);
+
             String str = linkedList.toString(maxBottleSize);
             System.out.println(str);
-            setTrue("replaceColorFun");
-            this.firstColor = firstColor;
-            this.secondColor = secondColor;
         }
-
     }
-    private int firstSwap;
-    private int secondSwap;
     public void swap(int bottleNumber){
         bottleNumber--;
        if(usingExtraBottle){
@@ -138,19 +200,20 @@ public class WaterSortGame {
             return;
         }
 
+        MethodNode methodNode = new MethodNode("swap");
+        methodNode.setSwapSelect(getSelectBottle());
+        methodNode.setSwapbottleNumber(bottleNumber);
+        methodStack.push(methodNode);
+
         linkedList.swap(selectBottle,bottleNumber);
         String str = linkedList.toString(maxBottleSize);
         System.out.println(str);
 
+
+
         selectBottle = bottleNumber;
-        setTrue("swapFun");
-        firstSwap = getSelectBottle();
-        secondSwap = bottleNumber;
     }
 
-
-    private int giverPour;
-    private int takerPour;
     public boolean pour(int bottleNumber){
         bottleNumber--;
         if(getSelectBottle()==-1){
@@ -176,25 +239,32 @@ public class WaterSortGame {
             return false;
         }
 
+        MethodNode methodNode = new MethodNode("pour");
+
        do{
            linkedList.getNode(bottleNumber).getStackNode().push(takeColor);
            linkedList.getNode(getSelectBottle()).getStackNode().pop();
            giveColor = takeColor;
            takeColor = linkedList.getNode(getSelectBottle()).getStackNode().peek();
-
+           methodNode.counterPour++;
 
        }while (!linkedList.getNode(bottleNumber).getStackNode().isFull() &&
                takeColor == giveColor);
+
+        methodNode.setPourSelect(getSelectBottle());
+        methodNode.setPourbottleNumber(bottleNumber);
+        methodStack.push(methodNode);
 
        if(linkedList.getNode(getSelectBottle()).getStackNode().isEmpty()){
            deSelect();
        }
         String str = linkedList.toString(maxBottleSize);
-        System.out.println(str);
-        setTrue("pourFun");
 
-        giverPour = getSelectBottle() ;
-        takerPour = bottleNumber;
+        System.out.println(str);
+
+
+
+
         return true;
     }
 
@@ -223,7 +293,10 @@ public class WaterSortGame {
         setSelectBottle(bottleNumber-1);
         String str = linkedList.toString(maxBottleSize);
         System.out.println(str);
-        setTrue("selectFun");
+
+        MethodNode methodNode = new MethodNode("select");
+        methodStack.push(methodNode);
+
         return true;
     }
 
@@ -231,7 +304,11 @@ public class WaterSortGame {
         if(getSelectBottle()==-1){
             return;
         }
-        beforSelect = getSelectBottle()+1;
+
+        MethodNode methodNode = new MethodNode("deSelect");
+        methodNode.setDeSelect(getSelectBottle());
+        methodStack.push(methodNode);
+
         Node selectNode = linkedList.getNode(getSelectBottle());
         selectNode.setSelected(false);
         setSelectBottle(-1);
@@ -241,7 +318,6 @@ public class WaterSortGame {
             System.out.println(str);
         }
         firstPrint=0;
-        setTrue("deselectFun");
     }
 
     public void selectNext(){
@@ -251,9 +327,17 @@ public class WaterSortGame {
 
         int select = getSelectBottle();
 
+        MethodNode methodNode = new MethodNode("selectNext");
+        methodNode.setSelectNext(select);
+        methodStack.push(methodNode);
+
+        firstPrint = 1;
+        deSelect();
+        methodStack.pop();
+
         if(!usingExtraBottle){
-            firstPrint = 1;
-            deSelect();
+
+
             if(select==colors.length){
                 select = 0;
                 System.out.println("end");
@@ -264,8 +348,6 @@ public class WaterSortGame {
             }
         }else {
 
-            firstPrint = 1;
-            deSelect();
             if(select==colors.length +1 ){
                 select = 0;
                 System.out.println("end");
@@ -277,8 +359,11 @@ public class WaterSortGame {
         }
 
 
-        select(select +1);
-        setTrue("selectNextFun");
+        if(!select(select +1)){
+            methodStack.pop();
+        }
+
+        methodStack.pop();
         //System.out.println(getSelectBottle() + "r2ftwg");
 
 
@@ -289,28 +374,38 @@ public class WaterSortGame {
             return;
         }
         int select = getSelectBottle();
+
+        MethodNode methodNode = new MethodNode("selectPervious");
+        methodNode.setSelectPervious(select);
+        methodStack.push(methodNode);
+
         firstPrint = 1;
         deSelect();
+        methodStack.pop();
+
+
 
         if(!usingExtraBottle){
-            if(select == 0){
-                select = colors.length - 1;
-            }
-            else{
-                select --;
-            }
-        }else{
             if(select == 0){
                 select = colors.length;
             }
             else{
                 select --;
             }
+        }else{
+            if(select == 0){
+                select = colors.length+1;
+            }
+            else{
+                select --;
+            }
         }
 
-        select(select + 1);
+        if(!select(select +1)){
+            methodStack.pop();
+        }
 
-        setTrue("selectPervFun");
+        methodStack.pop();
 
     }
 
@@ -319,7 +414,6 @@ public class WaterSortGame {
         boolean win = true;
         while (check!=null){
             if(check.getStackNode().isCorrect() || check.getStackNode().isEmpty()){
-                check = check.getNextNode();
                 continue;
             }
             win = false;
@@ -330,87 +424,32 @@ public class WaterSortGame {
 
 
 
-    public void undo(){
-        if(selectFun){
-            deSelect();
-            selectFun = false;
 
-        }
-        if(deselectFun){
-            select(beforSelect);
-            deselectFun = false;
 
-        }
-        if(selectNextFun){
-            selectPervious();
-            selectNextFun = false;
 
-        }
-        if(selectPervFun){
-            selectNext();
-            selectPervFun = false;
+    private void undoPour(MethodNode pourNode){
+        int select = pourNode.getPourbottleNumber();
+        int bottleNumber = pourNode.getPourSelect();
+        int counter = pourNode.counterPour;
 
-        }
-        if(pourFun){
-            deSelect();
-            select(takerPour+1);
-            pour(giverPour+1);
-            deSelect();
-            select(giverPour);
-            pourFun = false;
 
-        }
-        if (swapFun){
-            deSelect();
-            select(secondSwap);
-            swap(firstSwap+1);
-            deSelect();
-            select(firstSwap);
-            swapFun = false;
 
+        String takeColor = linkedList.getNode(select).getStackNode().peek();
+
+        for (int i = 0; i < counter; i++) {
+            linkedList.getNode(bottleNumber).getStackNode().push(takeColor);
+            linkedList.getNode(select).getStackNode().pop();
+            takeColor = linkedList.getNode(select).getStackNode().peek();
         }
 
-//        if(replaceColorFun){
-//            System.out.println("first color is " +secondColor);
-//            System.out.println("second color is " +firstColor);
-//            System.out.println();
-//            replaceColor(secondColor,firstColor);
-//            replaceColorFun = false;
-//
-//        }
+        deSelect();
+        methodStack.pop();
+        select(bottleNumber+1);
+        methodStack.pop();
 
-        if(addEmptyFun){
-            usingExtraBottle = false;
-            Node p = linkedList.getNode(colors.length);
-            p.setNextNode(null);
-            addEmptyFun = false;
-
-        }
+        String str = linkedList.toString(maxBottleSize);
+        System.out.println(str);
     }
-
-
-
-    private void setTrue(String function){
-        selectFun = false;
-        selectPervFun = false;
-        selectNextFun = false;
-        deselectFun = false;
-        addEmptyFun = false;
-        replaceColorFun = false;
-        swapFun = false;
-        pourFun = false;
-        switch (function) {
-            case "selectFun" -> selectFun = true;
-            case "selectPervFun" -> selectPervFun = true;
-            case "selectNextFun" -> selectNextFun = true;
-            case "deselectFun" -> deselectFun = true;
-            case "addEmptyFun" -> addEmptyFun = true;
-            case "replaceColorFun" -> replaceColorFun = true;
-            case "swapFun" -> swapFun = true;
-            case "pourFun" -> pourFun = true;
-        }
-    }
-
 
     private void sort(int index , String[] array){
         for (int i = index; i < array.length -1; i++) {
