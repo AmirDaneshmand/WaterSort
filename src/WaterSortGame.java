@@ -11,10 +11,17 @@ public class WaterSortGame {
     boolean usingExtraBottle = false;
     private int n;
 
+    private boolean useUndo = false;
+
     private MethodStack methodStack;
+    private MethodStack redoMethode;
+
+
+    private int useUndoRedo = 0;
 
     public WaterSortGame(String[] colors , int maxBottleSize){
         this.methodStack = new MethodStack();
+        this.redoMethode = new MethodStack();
         this.colors = colors;
         this.maxBottleSize = maxBottleSize;
         linkedList = new LinkedList();
@@ -37,6 +44,11 @@ public class WaterSortGame {
 
     public void undo(){
 
+        if(useUndoRedo>5){
+            System.out.println("You use your chance");
+            return;
+        }
+
         if(methodStack.isEmpty()){
             System.out.println("You dont have any operation to undo");
             return;
@@ -44,6 +56,8 @@ public class WaterSortGame {
 
         MethodNode operateNode = methodStack.pop();
         String operateStr = operateNode.getOperation();
+        redoMethode.push(operateNode);
+
 
         switch (operateStr){
             case "select":
@@ -51,6 +65,7 @@ public class WaterSortGame {
                 System.out.println("select");
                 System.out.println("");
                 deSelect();
+                redoMethode.push(operateNode);
                 methodStack.pop();
                 break;
             case "deSelect":
@@ -58,6 +73,7 @@ public class WaterSortGame {
                 System.out.println("deSelect");
                 System.out.println("");
                 select(operateNode.getDeSelect());
+                redoMethode.push(operateNode);
                 methodStack.pop();
                 break;
             case "selectNext":
@@ -65,6 +81,7 @@ public class WaterSortGame {
                 System.out.println("selectNext");
                 System.out.println("");
                 selectPervious();
+                redoMethode.push(operateNode);
                 methodStack.pop();
 
                 break;
@@ -73,6 +90,7 @@ public class WaterSortGame {
                 System.out.println("selectPervious");
                 System.out.println("");
                 selectNext();
+                redoMethode.push(operateNode);
                 methodStack.pop();
 
                 break;
@@ -81,6 +99,7 @@ public class WaterSortGame {
                 System.out.println("pour");
                 System.out.println("");
                 undoPour(operateNode);
+                redoMethode.push(operateNode);
                 methodStack.pop();
                 break;
             case "swap":
@@ -89,14 +108,19 @@ public class WaterSortGame {
                 System.out.println("");
                 deSelect();
                 methodStack.pop();
+                redoMethode.push(operateNode);
                 select(operateNode.getSwapbottleNumber()+1);
                 methodStack.pop();
+                redoMethode.push(operateNode);
                 swap(operateNode.getSwapSelect()+1);
                 methodStack.pop();
+                redoMethode.push(operateNode);
                 deSelect();
                 methodStack.pop();
+                redoMethode.push(operateNode);
                 select(operateNode.getSwapSelect()+1);
                 methodStack.pop();
+                redoMethode.push(operateNode);
                 break;
 
             case "addEmptyBottle":
@@ -117,12 +141,87 @@ public class WaterSortGame {
                 System.out.println("replaceColor");
                 System.out.println("");
                 undoReplaca(operateNode.getSecondColor(),operateNode.getFirstColor());
-
                 break;
         }
 
+
+        useUndo = true;
+        useUndoRedo++;
     }
 
+    public void redo(){
+
+        if(!useUndo){
+            methodStack.clean();
+        }
+        if(useUndoRedo>5){
+            System.out.println("You use your chance");
+            return;
+        }
+        if(redoMethode.isEmpty()){
+            System.out.println("You dont have any operation to redo");
+            return;
+        }
+
+        MethodNode redoNode = redoMethode.pop();
+        String redoStr = redoNode.getOperation();
+
+        switch (redoStr){
+            case "select":
+                System.out.println("");
+                System.out.println("select redo");
+                System.out.println("");
+                select(redoNode.getDeSelect());
+                break;
+            case "deSelect":
+                System.out.println("");
+                System.out.println("deSelect redo");
+                System.out.println("");
+                deSelect();
+                break;
+            case "selectNext":
+                System.out.println("");
+                System.out.println("selectNext redo");
+                System.out.println("");
+                selectNext();
+                break;
+            case "selectPervious":
+                System.out.println("");
+                System.out.println("selectPervious redo");
+                System.out.println("");
+                selectPervious();
+                break;
+            case "pour":
+                System.out.println("");
+                System.out.println("pour redo");
+                System.out.println("");
+                pour(redoNode.getPourbottleNumber()+1);
+                break;
+            case "swap":
+                System.out.println("");
+                System.out.println("swap redo");
+                System.out.println("");
+                swap(redoNode.getSwapSelect()+1);
+                break;
+
+            case "addEmptyBottle":
+                System.out.println("");
+                System.out.println("addEmptyBottle redo");
+                System.out.println("");
+                addEmptyBottle();
+                break;
+
+            case "replaceColor":
+                System.out.println("");
+                System.out.println("replaceColor redo");
+                System.out.println("");
+                replaceColor(redoNode.getFirstColor(),redoNode.getSecondColor());
+                break;
+
+
+        }
+        useUndoRedo++;
+    }
 
     public void addEmptyBottle(){
         if(usingExtraBottle){
@@ -141,6 +240,9 @@ public class WaterSortGame {
 
         String str = linkedList.toString(maxBottleSize);
         System.out.println(str);
+
+        useUndo = false;
+        redoMethode.pop();
     }
     public void replaceColor(String firstColor , String secondColor){
         boolean secondHas = false;
@@ -196,6 +298,8 @@ public class WaterSortGame {
 
             String str = linkedList.toString(maxBottleSize);
             System.out.println(str);
+            redoMethode.pop();
+            useUndo = false;
         }
     }
     public void swap(int bottleNumber){
@@ -231,7 +335,9 @@ public class WaterSortGame {
 
 
 
+        redoMethode.pop();
         selectBottle = bottleNumber;
+        useUndo = false;
     }
 
     public boolean pour(int bottleNumber){
@@ -282,10 +388,12 @@ public class WaterSortGame {
 
         System.out.println(str);
 
+        redoMethode.pop();
 
 
-
+        useUndo = false;
         return true;
+
     }
 
     public boolean select(int bottleNumber){
@@ -294,8 +402,15 @@ public class WaterSortGame {
             return false;
         }
         Node selectNode = linkedList.getNode(bottleNumber -1);
-        if(selectNode.getStackNode().isCorrect()){
+        if(selectNode.getStackNode().isCorrect() && !usingExtraBottle){
             System.out.println("The bottle is full");
+            System.out.println();
+            System.out.println("---------------------------------");
+            System.out.println();
+            return false;
+        }
+        if(selectNode.getStackNode().isCorrect() && bottleNumber!=colors.length+1){
+            System.out.println("The bottle is full!!!!!");
             System.out.println();
             System.out.println("---------------------------------");
             System.out.println();
@@ -303,6 +418,20 @@ public class WaterSortGame {
         }
         if(selectNode.getStackNode().isEmpty()){
             System.out.println("The bottle is empty!!!!!");
+            System.out.println();
+            System.out.println("---------------------------------");
+            System.out.println();
+            return false;
+        }
+        if(bottleNumber>colors.length+1 && !usingExtraBottle){
+            System.out.println("The bottle is not exist!!!!!");
+            System.out.println();
+            System.out.println("---------------------------------");
+            System.out.println();
+            return false;
+        }
+         if(bottleNumber>colors.length +2  && usingExtraBottle){
+            System.out.println("The bottle is not exist!!!!!");
             System.out.println();
             System.out.println("---------------------------------");
             System.out.println();
@@ -317,6 +446,8 @@ public class WaterSortGame {
         MethodNode methodNode = new MethodNode("select");
         methodStack.push(methodNode);
 
+        redoMethode.pop();
+        useUndo = false;
         return true;
     }
 
@@ -338,6 +469,8 @@ public class WaterSortGame {
             System.out.println(str);
         }
         firstPrint=0;
+        useUndo = false;
+        redoMethode.pop();
     }
 
     public void selectNext(){
@@ -352,7 +485,9 @@ public class WaterSortGame {
         methodStack.push(methodNode);
 
         firstPrint = 1;
+        redoMethode.push(new MethodNode("empty"));
         deSelect();
+
         methodStack.pop();
 
         if(!usingExtraBottle){
@@ -386,6 +521,8 @@ public class WaterSortGame {
         methodStack.pop();
         //System.out.println(getSelectBottle() + "r2ftwg");
 
+        useUndo = false;
+        redoMethode.pop();
 
     }
 
@@ -400,6 +537,7 @@ public class WaterSortGame {
         methodStack.push(methodNode);
 
         firstPrint = 1;
+        redoMethode.push(new MethodNode("empty"));
         deSelect();
         methodStack.pop();
 
@@ -426,7 +564,8 @@ public class WaterSortGame {
         }
 
         methodStack.pop();
-
+        useUndo = false;
+        redoMethode.pop();
     }
 
     public boolean hasWon(){
@@ -434,11 +573,13 @@ public class WaterSortGame {
         boolean win = true;
         while (check!=null){
             if(check.getStackNode().isCorrect() || check.getStackNode().isEmpty()){
+                check = check.getNextNode();
                 continue;
             }
             win = false;
             break;
         }
+
         return win;
     }
 
@@ -522,6 +663,13 @@ public class WaterSortGame {
             }
             node = new Node(stack);
             linkedList.addLink(node);
+            if(hasWon()){
+
+                n = colors.length*maxBottleSize;
+
+                linkedList = new LinkedList();
+                display();
+            }
         }
         Stack stack1 = new Stack(maxBottleSize);
         node = new Node(stack1);

@@ -162,14 +162,14 @@ public class LinkedList {
 
                     if(color == null){
                         str += "Empty    ";
-                    }else if(color =="Yellow"){
+                    }else if(color =="yellow"){
                         str += color+"   ";
-                    }else if(color =="Red"){
+                    }else if(color =="red"){
                         str += color+"      ";
-                    }else if(color =="Blue"){
+                    }else if(color =="blue"){
                         str += color+"     ";
                     }else{
-                        str += color+"   ";
+                        str += color+"     ";
                     }
                 }
                 step--;
@@ -189,14 +189,14 @@ public class LinkedList {
 
                         if(color == null){
                             str += "Empty    ";
-                        }else if(color =="Yellow"){
+                        }else if(color.equalsIgnoreCase("yellow")){
                             str += color+"   ";
-                        }else if(color =="Red"){
+                        }else if(color.equalsIgnoreCase("red")){
                             str += color+"      ";
-                        }else if(color =="Blue"){
+                        }else if(color.equalsIgnoreCase("blue")){
                             str += color+"     ";
                         }else{
-                            str += color+"   ";
+                            str += color+"         ";
                         }
                     }
 
@@ -205,14 +205,14 @@ public class LinkedList {
 
                         if(color == null){
                             str += "Empty    ";
-                        }else if(color =="Yellow"){
+                        }else if(color.equals("yellow")){
                             str += color+"   ";
-                        }else if(color =="Red"){
+                        }else if(color.equals("red")){
                             str += color+"      ";
-                        }else if(color =="Blue"){
+                        }else if(color.equals("blue")){
                             str += color+"     ";
                         }else{
-                            str += color+"   ";
+                            str += color+"       ";
                         }
                     }
 

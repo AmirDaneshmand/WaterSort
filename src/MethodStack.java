@@ -30,7 +30,7 @@ public class MethodStack {
 
     public MethodNode peek(){
         if(isEmpty()){
-            System.out.println("You dont have any operation to undo");
+           // System.out.println("You dont have any operation to undo");
             return null;
         }
         return last;
@@ -38,7 +38,7 @@ public class MethodStack {
 
     public MethodNode pop(){
         if(isEmpty()){
-            System.out.println("You dont have any operation to undo");
+            //System.out.println("You dont have any operation to undo");
             return null;
         }
         size--;
@@ -60,6 +60,10 @@ public class MethodStack {
 
 
 
+    public void clean(){
+        first = last = null;
+        size = 0;
+    }
 
     public MethodNode getFirst() {
         return first;
