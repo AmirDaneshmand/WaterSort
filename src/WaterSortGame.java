@@ -99,10 +99,30 @@ public class WaterSortGame {
                 methodStack.pop();
                 break;
 
+            case "addEmptyBottle":
+                System.out.println("");
+                System.out.println("addEmptyBottle");
+                System.out.println("");
+                usingExtraBottle = false;
+                Node p = linkedList.getNode(colors.length+1);
+                p.setNextNode(null);
+                linkedList.setAddBottle(false);
+                linkedList.setSize(linkedList.getSize()-1);
+                String str = linkedList.toString(maxBottleSize);
+                System.out.println(str);
+                break;
 
+            case "replaceColor":
+                System.out.println("");
+                System.out.println("replaceColor");
+                System.out.println("");
+                undoReplaca(operateNode.getSecondColor(),operateNode.getFirstColor());
+
+                break;
         }
 
     }
+
 
     public void addEmptyBottle(){
         if(usingExtraBottle){
@@ -427,6 +447,34 @@ public class WaterSortGame {
 
 
 
+    private void undoReplaca(String firstColor , String secondColor){
+
+        Node changeColorNode =linkedList.getNode(0);
+        Stack colorStack;
+        String findColor;
+        do {
+            colorStack = changeColorNode.getStackNode();
+            for (int i = 0; i < maxBottleSize ; i++) {
+                findColor = colorStack.getColor(i);
+                if(findColor==firstColor){
+                    colorStack.setColor(secondColor,i);
+
+                    // System.out.println(colorStack.getColor(i));
+                }
+                if(findColor==null){
+                    break;
+                }
+            }
+            changeColorNode = changeColorNode.getNextNode();
+        }while (changeColorNode!= null);
+
+
+            String str = linkedList.toString(maxBottleSize);
+            System.out.println(str);
+
+
+
+    }
     private void undoPour(MethodNode pourNode){
         int select = pourNode.getPourbottleNumber();
         int bottleNumber = pourNode.getPourSelect();

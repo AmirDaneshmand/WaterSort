@@ -244,4 +244,11 @@ public class LinkedList {
     public void setAddBottle(boolean addBottle) {
         this.addBottle = addBottle;
     }
+
+    public void setSize(int size){
+        this.size=size;
+    }
+    public int getSize(){
+        return size;
+    }
 }

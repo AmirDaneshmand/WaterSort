@@ -24,6 +24,7 @@ public class MethodNode {
 
     private int swapSelect;
     private int swapbottleNumber;
+
     public String getOperation() {
         return operation;
     }

@@ -72,10 +72,34 @@ public class Main {
 
 
 
-//        waterSortGame.replaceColor("Red","Green");
-//        //waterSortGame.undo();
-//
-//        waterSortGame.addEmptyBottle();
+            waterSortGame.replaceColor("Red","Green");
+            System.out.println("****************************************************************************");
+            System.out.println("replaceColor");
+            System.out.println("****************************************************************************");
+
+
+            waterSortGame.undo();
+            System.out.println("****************************************************************************");
+            System.out.println("undo");
+            System.out.println("****************************************************************************");
+
+
+
+
+            waterSortGame.select(1);
+            waterSortGame.pour(4);
+            waterSortGame.addEmptyBottle();
+            System.out.println("****************************************************************************");
+            System.out.println("addEmptyBottle");
+            System.out.println("****************************************************************************");
+
+
+            waterSortGame.undo();
+            System.out.println("****************************************************************************");
+            System.out.println("undo");
+            System.out.println("****************************************************************************");
+
+
 //        waterSortGame.pour(5);
        // waterSortGame.selectNext();waterSortGame.selectNext();waterSortGame.selectNext();waterSortGame.selectNext();waterSortGame.selectNext();
         //waterSortGame.undo();
